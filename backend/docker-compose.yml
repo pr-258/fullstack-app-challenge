@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:15
+    container_name: vacation-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - vacation_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  vacation_postgres_data:
