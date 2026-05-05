@@ -45,6 +45,12 @@ public class GlobalExceptionHandler {
         return ApiError.of(422, "VALIDATION_ERROR", "Request validation failed", fieldErrors);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ApiError handleIllegalArgument(IllegalArgumentException ex) {
+        return ApiError.of(422, "VALIDATION_ERROR", ex.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiError handleGeneric(Exception ex) {
