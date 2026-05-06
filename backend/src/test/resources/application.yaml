@@ -1,0 +1,9 @@
+spring:
+  config:
+    import: ""
+  datasource:
+    url: "jdbc:postgresql://localhost/placeholder"
+    username: placeholder
+    password: placeholder
+  jpa:
+    show-sql: false
