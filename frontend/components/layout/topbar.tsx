@@ -16,12 +16,20 @@ import { useActingUserStore } from "@/stores/acting-user-store"
 const pageLabels: Record<string, string> = {
   "/dashboard": "Visão Geral",
   "/users": "Colaboradores",
+  "/users/new": "Novo Colaborador",
   "/vacation-requests": "Pedidos de Férias",
+  "/vacation-requests/new": "Novo Pedido",
 }
 
 export function Topbar() {
   const pathname = usePathname()
   const { actingUser } = useActingUserStore()
+
+  const segments = pathname.split("/").filter(Boolean)
+  const isSubPage = segments.length > 1
+  const sectionPath = `/${segments[0]}`
+  const sectionLabel = pageLabels[sectionPath] ?? segments[0]
+  const currentLabel = pageLabels[pathname] ?? segments[segments.length - 1]
 
   return (
     <header className="flex h-12 shrink-0 items-center justify-between border-b px-4">
@@ -31,9 +39,21 @@ export function Topbar() {
             <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{pageLabels[pathname] ?? pathname}</BreadcrumbPage>
-          </BreadcrumbItem>
+          {isSubPage ? (
+            <>
+              <BreadcrumbItem>
+                <BreadcrumbLink href={sectionPath}>{sectionLabel}</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{currentLabel}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </>
+          ) : (
+            <BreadcrumbItem>
+              <BreadcrumbPage>{currentLabel}</BreadcrumbPage>
+            </BreadcrumbItem>
+          )}
         </BreadcrumbList>
       </Breadcrumb>
 
