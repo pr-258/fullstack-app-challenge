@@ -2,9 +2,12 @@
 
 import { useState } from "react"
 
+import Link from "next/link"
+
 import { ActionButtons } from "@/components/vacation-requests/action-buttons"
 import { DetailDrawer } from "@/components/vacation-requests/detail-drawer"
 import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/layout/page-header"
 import { useVacationRequestsQuery } from "@/queries/vacation-requests"
 import { useActingUserStore } from "@/stores/acting-user-store"
 import { statusLabels } from "@/types/api"
@@ -21,6 +24,9 @@ export default function VacationRequestsPage() {
   const canActOnRequests =
     actingUser?.role === "ADMIN" || actingUser?.role === "MANAGER"
 
+  const canCreate =
+    actingUser?.role === "ADMIN" || actingUser?.role === "COLLABORATOR"
+
   if (isLoading)
     return <p className="text-sm text-muted-foreground">A carregar...</p>
 
@@ -34,20 +40,33 @@ export default function VacationRequestsPage() {
   const items = data?.items ?? []
 
   if (items.length === 0)
-    return <p className="text-sm text-muted-foreground">Sem pedidos de férias.</p>
+    return (
+      <p className="text-sm text-muted-foreground">Sem pedidos de férias.</p>
+    )
 
   return (
     <>
+      <PageHeader
+        title="Pedidos de Férias"
+        description="Lista e gere os pedidos de férias."
+        action={
+          canCreate ? (
+            <Button asChild size="lg">
+              <Link href="/vacation-requests/new">Novo Pedido</Link>
+            </Button>
+          ) : undefined
+        }
+      />
       <div className="overflow-hidden rounded-md border">
         <table className="w-full text-xs">
           <thead className="bg-muted text-muted-foreground">
             <tr>
-              <th className="px-3 py-2 font-medium text-left">Colaborador</th>
-              <th className="px-3 py-2 font-medium text-left">Início</th>
-              <th className="px-3 py-2 font-medium text-left">Fim</th>
-              <th className="px-3 py-2 font-medium text-left">Dias</th>
-              <th className="px-3 py-2 font-medium text-left">Estado</th>
-              <th className="px-3 py-2 font-medium text-left">Ações</th>
+              <th className="px-3 py-2 text-left font-medium">Colaborador</th>
+              <th className="px-3 py-2 text-left font-medium">Início</th>
+              <th className="px-3 py-2 text-left font-medium">Fim</th>
+              <th className="px-3 py-2 text-left font-medium">Dias</th>
+              <th className="px-3 py-2 text-left font-medium">Estado</th>
+              <th className="px-3 py-2 text-left font-medium">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -56,7 +75,9 @@ export default function VacationRequestsPage() {
                 key={item.id}
                 className="border-t transition-colors hover:bg-muted/50"
               >
-                <td className="px-3 py-2 font-medium">{item.collaboratorName}</td>
+                <td className="px-3 py-2 font-medium">
+                  {item.collaboratorName}
+                </td>
                 <td className="px-3 py-2">{item.startDate}</td>
                 <td className="px-3 py-2">{item.endDate}</td>
                 <td className="px-3 py-2">{item.inclusiveDays}</td>
@@ -88,7 +109,9 @@ export default function VacationRequestsPage() {
       <DetailDrawer
         request={selected}
         open={selected !== null}
-        onOpenChange={(open) => { if (!open) setSelected(null) }}
+        onOpenChange={(open) => {
+          if (!open) setSelected(null)
+        }}
       />
     </>
   )
