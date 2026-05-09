@@ -21,6 +21,11 @@ const pageLabels: Record<string, string> = {
   "/vacation-requests/new": "Novo Pedido",
 }
 
+const leafLabels: Record<string, string> = {
+  new: "Novo",
+  edit: "Editar",
+}
+
 export function Topbar() {
   const pathname = usePathname()
   const { actingUser } = useActingUserStore()
@@ -29,7 +34,9 @@ export function Topbar() {
   const isSubPage = segments.length > 1
   const sectionPath = `/${segments[0]}`
   const sectionLabel = pageLabels[sectionPath] ?? segments[0]
-  const currentLabel = pageLabels[pathname] ?? segments[segments.length - 1]
+  const lastSegment = segments[segments.length - 1]
+  const currentLabel =
+    pageLabels[pathname] ?? leafLabels[lastSegment] ?? lastSegment
 
   return (
     <header className="flex h-12 shrink-0 items-center justify-between border-b px-4">

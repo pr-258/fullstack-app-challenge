@@ -31,6 +31,11 @@ export default function VacationRequestsPage() {
     selected.status === "PENDING" &&
     (actingUser?.role === "ADMIN" || selected.collaboratorId === actingUserId)
 
+  const canEdit =
+    selected !== null &&
+    selected.status === "PENDING" &&
+    (actingUser?.role === "ADMIN" || selected.collaboratorId === actingUserId)
+
   if (isLoading)
     return <p className="text-sm text-muted-foreground">A carregar...</p>
 
@@ -108,6 +113,7 @@ export default function VacationRequestsPage() {
         actingUserId={actingUserId ?? undefined}
         canActOnRequests={canActOnRequests}
         canCancel={canCancel}
+        canEdit={canEdit}
       />
     </>
   )

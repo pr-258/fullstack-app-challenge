@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 
+import Link from "next/link"
+
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -26,6 +28,7 @@ interface DetailDrawerProps {
   actingUserId?: string
   canActOnRequests?: boolean
   canCancel?: boolean
+  canEdit?: boolean
 }
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
@@ -44,6 +47,7 @@ export function DetailDrawer({
   actingUserId,
   canActOnRequests,
   canCancel,
+  canEdit,
 }: DetailDrawerProps) {
   const [rejecting, setRejecting] = useState(false)
   const [rejectionReason, setRejectionReason] = useState("")
@@ -89,7 +93,7 @@ export function DetailDrawer({
     onOpenChange(next)
   }
 
-  const hasFooter = showApproveReject || canCancel
+  const hasFooter = showApproveReject || canCancel || canEdit
 
   return (
     <Drawer direction="right" open={open} onOpenChange={handleOpenChange}>
@@ -164,6 +168,14 @@ export function DetailDrawer({
                   </div>
                 )}
               </>
+            )}
+
+            {canEdit && !rejecting && !cancelling && (
+              <Button asChild variant="outline">
+                <Link href={`/vacation-requests/${request?.id}/edit`}>
+                  Editar
+                </Link>
+              </Button>
             )}
 
             {canCancel && !rejecting && (
