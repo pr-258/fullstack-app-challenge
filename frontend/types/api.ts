@@ -36,9 +36,12 @@ export type MockUser = {
   managerName: string | null
 }
 
-export type MeResponse = MockUser & {
-  canManageUsers: boolean
-  canManageAllVacationRequests: boolean
+export type MeResponse = {
+  id: string
+  name: string
+  email: string
+  role: Role
+  permissions: string[]
 }
 
 export type User = {
