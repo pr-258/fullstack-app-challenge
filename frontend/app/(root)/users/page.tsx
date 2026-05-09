@@ -1,18 +1,23 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 
 import { useUsersQuery } from "@/queries/users"
 import { useActingUserStore } from "@/stores/acting-user-store"
 import { roleLabels } from "@/types/api"
+import type { User } from "@/types/api"
 import { PageHeader } from "@/components/layout/page-header"
 import { Button } from "@/components/ui/button"
+import { UserDetailDrawer } from "@/components/users/user-detail-drawer"
 
 export default function UsersPage() {
   const { actingUserId, actingUser } = useActingUserStore()
   const { data, isLoading, isError, error } = useUsersQuery(
     actingUserId ? { actingUserId } : null
   )
+
+  const [selected, setSelected] = useState<User | null>(null)
 
   const isAdmin = actingUser?.role === "ADMIN"
 
@@ -54,9 +59,7 @@ export default function UsersPage() {
                 <th className="px-3 py-2 text-left font-medium">Role</th>
                 <th className="px-3 py-2 text-left font-medium">Manager</th>
                 <th className="px-3 py-2 text-left font-medium">Ativo</th>
-                {isAdmin && (
-                  <th className="px-3 py-2 text-left font-medium">Ações</th>
-                )}
+                <th className="px-3 py-2 text-left font-medium">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -72,19 +75,31 @@ export default function UsersPage() {
                     {user.managerName ?? "-"}
                   </td>
                   <td className="px-3 py-2">{user.active ? "Sim" : "Não"}</td>
-                  {isAdmin && (
-                    <td className="px-3 py-2">
-                      <Button asChild size="sm" variant="outline">
-                        <Link href={`/users/${user.id}/edit`}>Editar</Link>
-                      </Button>
-                    </td>
-                  )}
+                  <td className="px-3 py-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelected(user)}
+                    >
+                      Ver
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       )}
+
+      <UserDetailDrawer
+        user={selected}
+        open={selected !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelected(null)
+        }}
+        actingUserId={actingUserId!}
+        isAdmin={isAdmin}
+      />
     </>
   )
 }
