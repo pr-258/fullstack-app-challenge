@@ -1,11 +1,12 @@
 "use client"
 
+import Link from "next/link"
+
 import { useUsersQuery } from "@/queries/users"
 import { useActingUserStore } from "@/stores/acting-user-store"
 import { roleLabels } from "@/types/api"
 import { PageHeader } from "@/components/layout/page-header"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
 
 export default function UsersPage() {
   const { actingUserId, actingUser } = useActingUserStore()
@@ -13,7 +14,7 @@ export default function UsersPage() {
     actingUserId ? { actingUserId } : null
   )
 
-  const canCreate = actingUser?.role === "ADMIN"
+  const isAdmin = actingUser?.role === "ADMIN"
 
   if (isLoading)
     return <p className="text-sm text-muted-foreground">A carregar...</p>
@@ -27,53 +28,63 @@ export default function UsersPage() {
 
   const items = data?.items ?? []
 
-  if (items.length === 0)
-    return <p className="text-sm text-muted-foreground">Sem colaboradores.</p>
-
   return (
     <>
       <PageHeader
         title="Colaboradores"
         description="Gere os colaboradores da organização."
         action={
-          canCreate ? (
+          isAdmin ? (
             <Button asChild size="lg">
               <Link href="/users/new">Adicionar Colaborador</Link>
             </Button>
           ) : undefined
         }
       />
-      <div className="overflow-hidden rounded-md border">
-        <table className="w-full text-xs">
-          <thead className="bg-muted text-muted-foreground">
-            <tr>
-              <th className="px-3 py-2 text-left font-medium">Nome</th>
-              <th className="px-3 py-2 text-left font-medium">Email</th>
-              <th className="px-3 py-2 text-left font-medium">Role</th>
-              <th className="px-3 py-2 text-left font-medium">Manager</th>
-              <th className="px-3 py-2 text-left font-medium">Ativo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((user) => (
-              <tr
-                key={user.id}
-                className="border-t transition-colors hover:bg-muted/50"
-              >
-                <td className="px-3 py-2 font-medium">{user.name}</td>
-                <td className="px-3 py-2 text-muted-foreground">
-                  {user.email}
-                </td>
-                <td className="px-3 py-2">{roleLabels[user.role]}</td>
-                <td className="px-3 py-2 text-muted-foreground">
-                  {user.managerName ?? "-"}
-                </td>
-                <td className="px-3 py-2">{user.active ? "Sim" : "Não"}</td>
+
+      {items.length === 0 ? (
+        <p className="text-sm text-muted-foreground">Sem colaboradores.</p>
+      ) : (
+        <div className="overflow-hidden rounded-md border">
+          <table className="w-full text-xs">
+            <thead className="bg-muted text-muted-foreground">
+              <tr>
+                <th className="px-3 py-2 text-left font-medium">Nome</th>
+                <th className="px-3 py-2 text-left font-medium">Email</th>
+                <th className="px-3 py-2 text-left font-medium">Role</th>
+                <th className="px-3 py-2 text-left font-medium">Manager</th>
+                <th className="px-3 py-2 text-left font-medium">Ativo</th>
+                {isAdmin && (
+                  <th className="px-3 py-2 text-left font-medium">Ações</th>
+                )}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {items.map((user) => (
+                <tr
+                  key={user.id}
+                  className="border-t transition-colors hover:bg-muted/50"
+                >
+                  <td className="px-3 py-2 font-medium">{user.name}</td>
+                  <td className="px-3 py-2 text-muted-foreground">{user.email}</td>
+                  <td className="px-3 py-2">{roleLabels[user.role]}</td>
+                  <td className="px-3 py-2 text-muted-foreground">
+                    {user.managerName ?? "-"}
+                  </td>
+                  <td className="px-3 py-2">{user.active ? "Sim" : "Não"}</td>
+                  {isAdmin && (
+                    <td className="px-3 py-2">
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={`/users/${user.id}/edit`}>Editar</Link>
+                      </Button>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </>
   )
 }

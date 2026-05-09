@@ -1,25 +1,27 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 
 import { PageHeader } from "@/components/layout/page-header"
 import { UserForm } from "@/components/users/user-form"
 import { ApiError } from "@/api/client/fetcher"
-import { useCreateUserMutation, useUsersQuery } from "@/queries/users"
+import { useUserQuery, useUpdateUserMutation, useUsersQuery } from "@/queries/users"
 import { useActingUserStore } from "@/stores/acting-user-store"
 
-export default function NewUserPage() {
+export default function EditUserPage() {
+  const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const { actingUserId } = useActingUserStore()
   const [rootError, setRootError] = useState<string>()
 
+  const { data: user, isLoading } = useUserQuery(id, actingUserId)
   const { data: managersData } = useUsersQuery(
     actingUserId ? { actingUserId, role: "MANAGER" } : null
   )
   const managers = managersData?.items ?? []
 
-  const create = useCreateUserMutation(actingUserId!)
+  const update = useUpdateUserMutation(id, actingUserId!)
 
   function onSubmit(values: {
     name: string
@@ -27,7 +29,7 @@ export default function NewUserPage() {
     role: "ADMIN" | "MANAGER" | "COLLABORATOR"
     managerId?: string
   }) {
-    create.mutate(
+    update.mutate(
       {
         name: values.name,
         email: values.email,
@@ -50,16 +52,29 @@ export default function NewUserPage() {
     )
   }
 
+  if (isLoading)
+    return <p className="text-sm text-muted-foreground">A carregar...</p>
+
+  if (!user)
+    return <p className="text-sm text-destructive">Utilizador não encontrado.</p>
+
   return (
     <>
       <PageHeader
-        title="Novo Colaborador"
-        description="Preenche os campos para adicionar um colaborador."
+        title="Editar Colaborador"
+        description="Altera os dados do colaborador e guarda."
       />
       <UserForm
+        defaultValues={{
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          managerId: user.managerId ?? undefined,
+        }}
         onSubmit={onSubmit}
-        isPending={create.isPending}
+        isPending={update.isPending}
         onCancel={() => router.replace("/users")}
+        submitLabel="Guardar"
         managers={managers}
         rootError={rootError}
       />
