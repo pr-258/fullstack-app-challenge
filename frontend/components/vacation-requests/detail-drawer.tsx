@@ -1,11 +1,20 @@
 "use client"
 
+import { useState } from "react"
+
+import { Button } from "@/components/ui/button"
 import {
   Drawer,
   DrawerContent,
+  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  useApproveVacationRequestMutation,
+  useRejectVacationRequestMutation,
+} from "@/queries/vacation-requests"
 import { statusLabels } from "@/types/api"
 import type { VacationRequest } from "@/types/api"
 
@@ -13,6 +22,8 @@ interface DetailDrawerProps {
   request: VacationRequest | null
   open: boolean
   onOpenChange: (open: boolean) => void
+  actingUserId?: string
+  canActOnRequests?: boolean
 }
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
@@ -24,13 +35,56 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
   )
 }
 
-export function DetailDrawer({ request, open, onOpenChange }: DetailDrawerProps) {
+export function DetailDrawer({
+  request,
+  open,
+  onOpenChange,
+  actingUserId,
+  canActOnRequests,
+}: DetailDrawerProps) {
+  const [rejecting, setRejecting] = useState(false)
+  const [rejectionReason, setRejectionReason] = useState("")
+
+  const approve = useApproveVacationRequestMutation(actingUserId ?? "")
+  const reject = useRejectVacationRequestMutation(actingUserId ?? "")
+
+  const isPending = request?.status === "PENDING"
+  const showActions = canActOnRequests && isPending
+
+  function handleApprove() {
+    if (!request) return
+    approve.mutate(request.id, { onSuccess: () => onOpenChange(false) })
+  }
+
+  function handleRejectConfirm() {
+    if (!request) return
+    reject.mutate(
+      { id: request.id, body: { rejectionReason } },
+      {
+        onSuccess: () => {
+          onOpenChange(false)
+          setRejecting(false)
+          setRejectionReason("")
+        },
+      }
+    )
+  }
+
+  function handleOpenChange(next: boolean) {
+    if (!next) {
+      setRejecting(false)
+      setRejectionReason("")
+    }
+    onOpenChange(next)
+  }
+
   return (
-    <Drawer direction="right" open={open} onOpenChange={onOpenChange}>
+    <Drawer direction="right" open={open} onOpenChange={handleOpenChange}>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Pedido de Férias</DrawerTitle>
         </DrawerHeader>
+
         {request && (
           <div className="space-y-4 p-4">
             <Field label="Colaborador" value={request.collaboratorName} />
@@ -51,6 +105,53 @@ export function DetailDrawer({ request, open, onOpenChange }: DetailDrawerProps)
             )}
             <Field label="Criado em" value={request.createdAt} />
           </div>
+        )}
+
+        {showActions && (
+          <DrawerFooter>
+            {rejecting ? (
+              <div className="space-y-2">
+                <Textarea
+                  placeholder="Motivo da rejeição"
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                />
+                <div className="flex gap-2">
+                  <Button
+                    disabled={!rejectionReason.trim() || reject.isPending}
+                    onClick={handleRejectConfirm}
+                  >
+                    Confirmar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setRejecting(false)
+                      setRejectionReason("")
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  disabled={approve.isPending}
+                  onClick={handleApprove}
+                >
+                  Aprovar
+                </Button>
+                <Button
+                  variant="outline"
+                  disabled={reject.isPending}
+                  onClick={() => setRejecting(true)}
+                >
+                  Rejeitar
+                </Button>
+              </div>
+            )}
+          </DrawerFooter>
         )}
       </DrawerContent>
     </Drawer>

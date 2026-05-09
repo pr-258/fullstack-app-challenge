@@ -4,7 +4,6 @@ import { useState } from "react"
 
 import Link from "next/link"
 
-import { ActionButtons } from "@/components/vacation-requests/action-buttons"
 import { DetailDrawer } from "@/components/vacation-requests/detail-drawer"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/layout/page-header"
@@ -75,30 +74,19 @@ export default function VacationRequestsPage() {
                 key={item.id}
                 className="border-t transition-colors hover:bg-muted/50"
               >
-                <td className="px-3 py-2 font-medium">
-                  {item.collaboratorName}
-                </td>
+                <td className="px-3 py-2 font-medium">{item.collaboratorName}</td>
                 <td className="px-3 py-2">{item.startDate}</td>
                 <td className="px-3 py-2">{item.endDate}</td>
                 <td className="px-3 py-2">{item.inclusiveDays}</td>
                 <td className="px-3 py-2">{statusLabels[item.status]}</td>
                 <td className="px-3 py-2">
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setSelected(item)}
-                    >
-                      Ver
-                    </Button>
-                    {canActOnRequests && (
-                      <ActionButtons
-                        id={item.id}
-                        status={item.status}
-                        actingUserId={actingUserId!}
-                      />
-                    )}
-                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setSelected(item)}
+                  >
+                    Ver
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -112,6 +100,8 @@ export default function VacationRequestsPage() {
         onOpenChange={(open) => {
           if (!open) setSelected(null)
         }}
+        actingUserId={actingUserId ?? undefined}
+        canActOnRequests={canActOnRequests}
       />
     </>
   )
