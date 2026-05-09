@@ -7,13 +7,8 @@ import { Button } from "@/components/ui/button"
 import { SelectField } from "@/components/form/select-field"
 import { useMockUsersQuery } from "@/queries/auth"
 import { useActingUserStore } from "@/stores/acting-user-store"
+import { roleLabels } from "@/types/api"
 import type { MockUser, Role } from "@/types/api"
-
-const roleLabels: Record<Role, string> = {
-  ADMIN: "Admin",
-  MANAGER: "Manager",
-  COLLABORATOR: "Collaborator",
-}
 
 const roleOrder: Role[] = ["ADMIN", "MANAGER", "COLLABORATOR"]
 

@@ -1,5 +1,11 @@
 export type Role = "ADMIN" | "MANAGER" | "COLLABORATOR"
 
+export const roleLabels: Record<Role, string> = {
+  ADMIN: "Admin",
+  MANAGER: "Manager",
+  COLLABORATOR: "Colaborador",
+}
+
 export type VacationRequestStatus =
   | "PENDING"
   | "APPROVED"
