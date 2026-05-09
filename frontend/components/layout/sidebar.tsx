@@ -20,12 +20,29 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useActingUserStore } from "@/stores/acting-user-store"
 import { roleLabels } from "@/types/api"
+import type { Role } from "@/types/api"
 import { cn } from "@/lib/utils"
 
-const navItems = [
+type navItem = {
+  label: string
+  href: string
+  icon: typeof DashboardSquare01Icon
+  roles?: Role[]
+}
+
+const navItems: navItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: DashboardSquare01Icon },
-  { label: "Colaboradores", href: "/users", icon: UserMultiple02Icon },
-  { label: "Pedidos de Férias", href: "/vacation-requests", icon: Calendar03Icon },
+  {
+    label: "Colaboradores",
+    href: "/users",
+    icon: UserMultiple02Icon,
+    roles: ["ADMIN", "MANAGER"],
+  },
+  {
+    label: "Pedidos de Férias",
+    href: "/vacation-requests",
+    icon: Calendar03Icon,
+  },
 ]
 
 export function Sidebar() {
@@ -51,21 +68,31 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-1 p-2">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-              pathname === item.href
-                ? "bg-accent font-medium text-accent-foreground"
-                : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-            )}
-          >
-            <HugeiconsIcon icon={item.icon} strokeWidth={2} className="size-4 shrink-0" />
-            {item.label}
-          </Link>
-        ))}
+        {navItems
+          .filter(
+            (item) =>
+              !item.roles ||
+              (actingUser?.role && item.roles.includes(actingUser.role))
+          )
+          .map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+                pathname === item.href
+                  ? "bg-accent font-medium text-accent-foreground"
+                  : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+              )}
+            >
+              <HugeiconsIcon
+                icon={item.icon}
+                strokeWidth={2}
+                className="size-4 shrink-0"
+              />
+              {item.label}
+            </Link>
+          ))}
       </nav>
 
       <div className="p-2">
@@ -80,7 +107,11 @@ export function Sidebar() {
                 {actingUser?.role ? roleLabels[actingUser.role] : null}
               </p>
             </div>
-            <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} className="size-4 shrink-0 text-muted-foreground" />
+            <HugeiconsIcon
+              icon={ArrowDown01Icon}
+              strokeWidth={2}
+              className="size-4 shrink-0 text-muted-foreground"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent side="top" align="start" className="w-48">
             <DropdownMenuItem onClick={handleLogout}>

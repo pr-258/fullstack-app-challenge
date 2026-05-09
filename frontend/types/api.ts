@@ -12,6 +12,13 @@ export type VacationRequestStatus =
   | "REJECTED"
   | "CANCELLED"
 
+export const statusLabels: Record<VacationRequestStatus, string> = {
+  PENDING: "Pendente",
+  APPROVED: "Aprovado",
+  REJECTED: "Rejeitado",
+  CANCELLED: "Cancelado",
+}
+
 export type ApiFieldError = {
   field: string
   message: string
