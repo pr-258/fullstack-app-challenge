@@ -1,0 +1,10 @@
+.next/
+node_modules/
+.env
+.env.*
+!.env.local.example
+Dockerfile
+README.md
+.git/
+.DS_Store
+tsconfig.tsbuildinfo
