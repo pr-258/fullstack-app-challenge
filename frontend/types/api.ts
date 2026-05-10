@@ -112,3 +112,11 @@ export type UpdateVacationRequestPayload = {
 export type RejectVacationRequestPayload = {
   rejectionReason: string
 }
+
+export type DashboardStats = {
+  totalCollaborators: number
+  pendingRequests: number
+  approvedRequests: number
+  rejectedRequests: number
+  totalApprovedDays: number
+}

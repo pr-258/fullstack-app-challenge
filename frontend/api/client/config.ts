@@ -7,4 +7,5 @@ export const API_ENDPOINTS = {
   auth: "/api/auth",
   users: "/api/users",
   vacationRequests: "/api/vacation-requests",
+  dashboardStats: "/api/dashboard/stats",
 } as const

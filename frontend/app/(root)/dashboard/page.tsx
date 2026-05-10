@@ -5,8 +5,8 @@ import Link from "next/link"
 import { StatCard } from "@/components/dashboard/stat-card"
 import { PageHeader } from "@/components/layout/page-header"
 import { VacationRequestsTable } from "@/components/vacation-requests/vacation-requests-table"
+import { useDashboardStatsQuery } from "@/queries/dashboard"
 import { useVacationRequestsQuery } from "@/queries/vacation-requests"
-import { useUsersQuery } from "@/queries/users"
 import { useActingUserStore } from "@/stores/acting-user-store"
 
 function toBars(values: number[]): string[] {
@@ -22,25 +22,21 @@ export default function DashboardPage() {
   const isManager = actingUser?.role === "MANAGER"
   const isCollaborator = actingUser?.role === "COLLABORATOR"
 
-  const { data: requestsData } = useVacationRequestsQuery(
-    actingUserId ? { actingUserId } : null
+  const { data: stats } = useDashboardStatsQuery(actingUserId)
+
+  const { data: recentData } = useVacationRequestsQuery(
+    actingUserId
+      ? { actingUserId, size: 5, sort: "createdAt,desc" }
+      : null
   )
 
-  const { data: usersData } = useUsersQuery(
-    actingUserId && (isAdmin || isManager) ? { actingUserId } : null
-  )
+  const pending = stats?.pendingRequests ?? 0
+  const approved = stats?.approvedRequests ?? 0
+  const rejected = stats?.rejectedRequests ?? 0
+  const totalCollaborators = stats?.totalCollaborators ?? 0
+  const totalApprovedDays = stats?.totalApprovedDays ?? 0
 
-  const requests = requestsData?.items ?? []
-  const pending = requests.filter((r) => r.status === "PENDING").length
-  const approved = requests.filter((r) => r.status === "APPROVED").length
-  const rejected = requests.filter((r) => r.status === "REJECTED").length
-  const cancelled = requests.filter((r) => r.status === "CANCELLED").length
-  const totalDaysApproved = requests
-    .filter((r) => r.status === "APPROVED")
-    .reduce((sum, r) => sum + r.inclusiveDays, 0)
-  const totalUsers = usersData?.totalItems ?? 0
-
-  const recentRequests = requests.slice(0, 5)
+  const recentRequests = recentData?.items ?? []
 
   const today = new Date().toLocaleDateString("pt-PT", {
     weekday: "long",
@@ -57,42 +53,37 @@ export default function DashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {(isAdmin || isManager) && (
           <StatCard
-            value={totalUsers}
+            value={totalCollaborators}
             label={
               isAdmin ? "Total de colaboradores" : "Colaboradores na equipa"
             }
-            bars={toBars([totalUsers, totalUsers, totalUsers, totalUsers])}
+            bars={toBars([totalCollaborators, totalCollaborators, totalCollaborators, totalCollaborators])}
           />
         )}
 
         <StatCard
           value={pending}
           label="Pedidos pendentes"
-          bars={toBars([pending, approved, rejected, cancelled])}
+          bars={toBars([pending, approved, rejected])}
         />
 
         <StatCard
           value={approved}
           label="Pedidos aprovados"
-          bars={toBars([approved, pending, rejected, cancelled])}
+          bars={toBars([approved, pending, rejected])}
         />
 
         {isCollaborator ? (
           <StatCard
-            value={totalDaysApproved}
+            value={totalApprovedDays}
             label="Dias aprovados"
-            bars={toBars([
-              totalDaysApproved,
-              approved * 5,
-              pending * 5,
-              rejected * 5,
-            ])}
+            bars={toBars([totalApprovedDays, approved * 5, pending * 5])}
           />
         ) : (
           <StatCard
             value={rejected}
             label="Pedidos rejeitados"
-            bars={toBars([rejected, approved, pending, cancelled])}
+            bars={toBars([rejected, approved, pending])}
           />
         )}
       </div>
