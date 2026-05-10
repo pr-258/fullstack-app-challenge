@@ -4,6 +4,7 @@ import com.paulorinze.backend.config.ActingUserContext;
 import com.paulorinze.backend.dto.*;
 import com.paulorinze.backend.entity.User;
 import com.paulorinze.backend.entity.VacationRequest;
+import com.paulorinze.backend.enums.Role;
 import com.paulorinze.backend.enums.VacationRequestStatus;
 import com.paulorinze.backend.exception.ConflictException;
 import com.paulorinze.backend.exception.ForbiddenException;
@@ -54,6 +55,33 @@ public class VacationRequestService {
         }
 
         return PageResponse.from(vacationRequestRepository.findAll(spec, pageable).map(this::toResponse));
+    }
+
+    public DashboardStatsResponse getDashboardStats() {
+        Specification<VacationRequest> baseSpec = (root, query, cb) -> cb.conjunction();
+
+        if (actingUserContext.isCollaborator()) {
+            baseSpec = VacationRequestSpecification.forCollaborator(actingUserContext.getActingUserId());
+        } else if (actingUserContext.isManager()) {
+            baseSpec = VacationRequestSpecification.forManager(actingUserContext.getActingUserId());
+        }
+
+        long pending  = vacationRequestRepository.count(baseSpec.and((r, q, cb) -> cb.equal(r.get("status"), PENDING)));
+        long approved = vacationRequestRepository.count(baseSpec.and((r, q, cb) -> cb.equal(r.get("status"), APPROVED)));
+        long rejected = vacationRequestRepository.count(baseSpec.and((r, q, cb) -> cb.equal(r.get("status"), REJECTED)));
+
+        long totalCollaborators = 0;
+        if (actingUserContext.isAdmin()) {
+            totalCollaborators = userRepository.countByRoleAndActiveTrue(Role.COLLABORATOR);
+        } else if (actingUserContext.isManager()) {
+            totalCollaborators = userRepository.countByManager_IdAndActiveTrue(actingUserContext.getActingUserId());
+        }
+
+        long totalApprovedDays = actingUserContext.isCollaborator()
+                ? vacationRequestRepository.sumApprovedDaysByCollaborator(actingUserContext.getActingUserId())
+                : 0L;
+
+        return new DashboardStatsResponse(totalCollaborators, pending, approved, rejected, totalApprovedDays);
     }
 
     public VacationRequestResponse getVacationRequestById(UUID id) {

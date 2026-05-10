@@ -1,6 +1,7 @@
 package com.paulorinze.backend.repository;
 
 import com.paulorinze.backend.entity.User;
+import com.paulorinze.backend.enums.Role;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -21,4 +22,8 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
     List<User> findAllByOrderByNameAsc();
 
     List<User> findByManager_Id(UUID managerId);
+
+    long countByRoleAndActiveTrue(Role role);
+
+    long countByManager_IdAndActiveTrue(UUID managerId);
 }

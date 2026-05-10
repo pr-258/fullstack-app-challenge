@@ -241,8 +241,8 @@ class VacationRequestApiTest extends ApiTestSupport {
         String createBody = """
             {
               "collaboratorId": "%s",
-              "startDate": "2026-11-01",
-              "endDate": "2026-11-05",
+              "startDate": "2027-01-01",
+              "endDate": "2027-01-05",
               "reason": "Self-approval attempt"
             }
             """.formatted(ANA);

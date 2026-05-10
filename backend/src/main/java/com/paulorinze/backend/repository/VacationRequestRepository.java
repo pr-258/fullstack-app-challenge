@@ -36,4 +36,12 @@ public interface VacationRequestRepository extends JpaRepository<VacationRequest
             @Param("endDate") LocalDate endDate,
             @Param("statuses") List<VacationRequestStatus> statuses,
             @Param("excludeId") UUID excludeId);
+
+    @Query(value = """
+            SELECT COALESCE(SUM(CAST(end_date - start_date + 1 AS bigint)), 0)
+            FROM vacation_requests
+            WHERE collaborator_id = :collaboratorId
+            AND status = 'APPROVED'
+            """, nativeQuery = true)
+    long sumApprovedDaysByCollaborator(@Param("collaboratorId") UUID collaboratorId);
 }
