@@ -21,7 +21,7 @@ import {
   ALL_ROLES,
   UsersTableFilters,
 } from "@/components/users/users-table-filters"
-import { UserDetailDrawer } from "@/components/users/user-detail-drawer"
+import { UserDetailDrawer } from "@/components/users/user-detail-drawer/user-detail-drawer"
 import { UsersTable } from "@/components/users/users-table"
 
 export default function UsersPage() {

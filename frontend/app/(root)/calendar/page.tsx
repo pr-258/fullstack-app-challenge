@@ -3,16 +3,16 @@
 import { useState } from "react"
 
 import { PageHeader } from "@/components/layout/page-header"
-import { VacationCalendar } from "@/components/calendar/vacation-calendar"
-import { DetailDrawer } from "@/components/vacation-requests/detail-drawer"
+import { VacationCalendar } from "@/components/vacation-calendar"
+import { VacationRequestDetailDrawer } from "@/components/vacation-requests/vacation-detail-drawer/vacation-detail-drawer"
 import { useVacationRequestsQuery } from "@/queries/vacation-requests"
 import { useActingUserStore } from "@/stores/acting-user-store"
 import type { VacationRequest, VacationRequestStatus } from "@/types/api"
 
 const FILTER_OPTIONS = [
-  { value: "ALL",      label: "Todos" },
+  { value: "ALL", label: "Todos" },
   { value: "APPROVED", label: "Aprovados" },
-  { value: "PENDING",  label: "Pendentes" },
+  { value: "PENDING", label: "Pendentes" },
 ] as const
 
 type StatusFilter = "ALL" | VacationRequestStatus
@@ -23,9 +23,7 @@ export default function CalendarPage() {
   const [selected, setSelected] = useState<VacationRequest | null>(null)
 
   const { data, isLoading } = useVacationRequestsQuery(
-    actingUserId
-      ? { actingUserId, size: 200, sort: "startDate,asc" }
-      : null
+    actingUserId ? { actingUserId, size: 200, sort: "startDate,asc" } : null
   )
 
   const canActOnRequests =
@@ -90,7 +88,7 @@ export default function CalendarPage() {
         />
       )}
 
-      <DetailDrawer
+      <VacationRequestDetailDrawer
         request={selected}
         open={selected !== null}
         onOpenChange={(open) => {

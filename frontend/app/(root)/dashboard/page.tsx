@@ -2,12 +2,12 @@
 
 import Link from "next/link"
 
-import { StatCard } from "@/components/dashboard/stat-card"
 import { PageHeader } from "@/components/layout/page-header"
 import { VacationRequestsTable } from "@/components/vacation-requests/vacation-requests-table"
 import { useDashboardStatsQuery } from "@/queries/dashboard"
 import { useVacationRequestsQuery } from "@/queries/vacation-requests"
 import { useActingUserStore } from "@/stores/acting-user-store"
+import { StatCard } from "@/components/stat-card"
 
 function toBars(values: number[]): string[] {
   const max = Math.max(...values, 1)
@@ -25,9 +25,7 @@ export default function DashboardPage() {
   const { data: stats } = useDashboardStatsQuery(actingUserId)
 
   const { data: recentData } = useVacationRequestsQuery(
-    actingUserId
-      ? { actingUserId, size: 5, sort: "createdAt,desc" }
-      : null
+    actingUserId ? { actingUserId, size: 5, sort: "createdAt,desc" } : null
   )
 
   const pending = stats?.pendingRequests ?? 0
@@ -57,7 +55,12 @@ export default function DashboardPage() {
             label={
               isAdmin ? "Total de colaboradores" : "Colaboradores na equipa"
             }
-            bars={toBars([totalCollaborators, totalCollaborators, totalCollaborators, totalCollaborators])}
+            bars={toBars([
+              totalCollaborators,
+              totalCollaborators,
+              totalCollaborators,
+              totalCollaborators,
+            ])}
           />
         )}
 

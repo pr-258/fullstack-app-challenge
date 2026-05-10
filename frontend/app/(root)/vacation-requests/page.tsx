@@ -19,7 +19,7 @@ import {
   ALL_STATUSES,
   VacationRequestTableFilters,
 } from "@/components/vacation-requests/vacation-request-table-filters"
-import { DetailDrawer } from "@/components/vacation-requests/detail-drawer"
+import { VacationRequestDetailDrawer } from "@/components/vacation-requests/vacation-detail-drawer/vacation-detail-drawer"
 import { VacationRequestsTableContent } from "@/components/vacation-requests/vacation-requests-table"
 import { usePagination } from "@/hooks/use-pagination"
 import { useUsersQuery } from "@/queries/users"
@@ -194,7 +194,7 @@ export default function VacationRequestsPage() {
         </TableCardFooter>
       </TableCard>
 
-      <DetailDrawer
+      <VacationRequestDetailDrawer
         request={selected}
         open={selected !== null}
         onOpenChange={(open) => {

@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { VacationStatusBadge } from "@/components/vacation-requests/vacation-status-badge"
 import type { VacationRequest } from "@/types/api"
+import { formatDate, formatDateTime } from "@/lib/dates"
 
 type VacationRequestsTableProps = {
   requests: VacationRequest[]
@@ -30,24 +31,6 @@ type VacationRequestsTableContentProps = Omit<
   VacationRequestsTableProps,
   "title" | "action"
 >
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("pt-PT", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  }).format(new Date(value))
-}
-
-function formatDateTime(value: string) {
-  return new Intl.DateTimeFormat("pt-PT", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(value))
-}
 
 export function VacationRequestsTable({
   requests,
