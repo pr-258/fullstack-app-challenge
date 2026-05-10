@@ -1,14 +1,30 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { RadioCardField } from "@/components/form/radio-card-field"
 import { SelectField } from "@/components/form/select-field"
-import { roleLabels } from "@/types/api"
-
 import { useLoginSelection } from "../../hooks/use-login-selection"
+
+const roleOptions = [
+  {
+    value: "ADMIN",
+    label: "Admin",
+    description: "Acesso total a utilizadores e todos os pedidos de férias",
+  },
+  {
+    value: "MANAGER",
+    label: "Manager",
+    description: "Aprova/rejeita pedidos da sua equipa",
+  },
+  {
+    value: "COLLABORATOR",
+    label: "Colaborador",
+    description: "Pode criar, ver, editar e cancelar os seus pedidos",
+  },
+]
 
 export function LoginForm() {
   const {
-    roleOrder,
     error,
     isError,
     isLoading,
@@ -22,8 +38,8 @@ export function LoginForm() {
   } = useLoginSelection()
 
   return (
-    <section className="flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-sm space-y-6 p-6 shadow-sm">
+    <section className="w-full px-4 sm:max-w-sm">
+      <div className="space-y-6 py-8 sm:rounded-xl sm:border sm:p-8 sm:shadow-sm">
         <div className="space-y-2 text-center">
           <p className="text-sm font-medium text-muted-foreground">
             TaskFlow Ltda.
@@ -37,15 +53,12 @@ export function LoginForm() {
           </p>
         </div>
         <div className="space-y-4">
-          <SelectField
+          <RadioCardField
             label="Role"
             value={selectedRole}
-            options={roleOrder.map((role) => ({
-              value: role,
-              label: roleLabels[role],
-            }))}
-            onValueChange={handleRoleChange}
-            disabled={isLoading || isError}
+            options={roleOptions}
+            onChange={handleRoleChange}
+            cols={1}
           />
 
           <SelectField

@@ -10,7 +10,10 @@ interface RadioCardFieldProps {
   options: RadioCardOption[]
   onChange: (value: string) => void
   error?: string
+  cols?: 1 | 2 | 3
 }
+
+const colsClass = { 1: "grid-cols-1", 2: "grid-cols-2", 3: "grid-cols-3" } as const
 
 export function RadioCardField({
   label,
@@ -18,11 +21,12 @@ export function RadioCardField({
   options,
   onChange,
   error,
+  cols = 3,
 }: RadioCardFieldProps) {
   return (
     <div className="grid gap-2 text-sm">
       <span className="font-medium">{label}</span>
-      <div className="grid grid-cols-3 gap-3">
+      <div className={`grid ${colsClass[cols]} gap-3`}>
         {options.map((option) => {
           const selected = value === option.value
           return (

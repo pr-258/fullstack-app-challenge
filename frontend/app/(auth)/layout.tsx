@@ -1,7 +1,6 @@
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="grid min-h-svh bg-background text-foreground lg:grid-cols-2">
-      <div className="hidden bg-muted lg:block" />
+    <main className="flex min-h-svh items-center justify-center bg-background text-foreground">
       {children}
     </main>
   )
