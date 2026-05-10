@@ -60,10 +60,16 @@ Depois de selecionar um utilizador, o frontend guarda a sessao mock localmente e
 
 ## Estrutura
 
-- `app/`: rotas e layouts da aplicacao.
-- `api/client/`: configuracao e fetcher HTTP.
-- `api/resources/`: funcoes por recurso da API.
-- `queries/`: hooks e keys do TanStack Query.
-- `stores/`: estado local persistido.
-- `components/`: componentes de UI e componentes por feature.
-- `types/`: tipos partilhados do frontend.
+```text
+app/                rotas e layouts (Next.js App Router)
+├── (auth)/         páginas públicas (login)
+└── (root)/         páginas protegidas (dashboard, users, vacation-requests, calendar)
+api/
+├── client/         configuração e fetcher HTTP centralizado
+└── resources/      funções tipadas por recurso da API
+components/         componentes de UI reutilizáveis e componentes por feature
+hooks/              lógica extraída das páginas
+queries/            hooks e query keys do TanStack Query
+stores/             estado persistido com Zustand (acting user)
+types/              tipos TypeScript partilhados
+```

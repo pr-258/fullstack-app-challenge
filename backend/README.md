@@ -86,3 +86,20 @@ Pedidos de ferias:
 - `page`, `size`, `sort`
 
 Consultar o Swagger UI para detalhes dos endpoints, schemas e respostas de erro.
+
+## Estrutura
+
+```text
+src/main/java/
+├── controller/     endpoints REST
+├── service/        lógica de negócio e regras de autorização
+├── repository/     acesso a dados com JPA e Specifications
+├── entity/         entidades JPA (User, VacationRequest)
+├── dto/            request e response DTOs com validação
+├── exception/      exceções de domínio e GlobalExceptionHandler
+├── enums/          Role e VacationRequestStatus
+└── config/         CORS, interceptor de autenticação e Flyway
+src/main/resources/
+└── db/migration/   migrações Flyway (schema, seed base, seed paginação)
+src/test/           testes de integração com Testcontainers
+```
