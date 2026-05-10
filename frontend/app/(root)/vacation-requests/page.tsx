@@ -4,7 +4,7 @@ import Link from "next/link"
 
 import { PageHeader } from "@/components/layout/page-header"
 import { Button } from "@/components/ui/button"
-import { useVacationRequestsList } from "@/components/vacation-requests/use-vacation-requests-list"
+import { useVacationRequestsList } from "@/hooks/use-vacation-requests-list"
 import { VacationRequestDetailDrawer } from "@/components/vacation-requests/vacation-detail-drawer/vacation-detail-drawer"
 import { VacationRequestsTableCard } from "@/components/vacation-requests/vacation-requests-table-card"
 

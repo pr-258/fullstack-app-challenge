@@ -3,7 +3,7 @@ import Link from "next/link"
 
 import { PageHeader } from "@/components/layout/page-header"
 import { Button } from "@/components/ui/button"
-import { useUsersList } from "@/components/users/use-users-list"
+import { useUsersList } from "@/hooks/use-users-list"
 import { UserDetailDrawer } from "@/components/users/user-detail-drawer/user-detail-drawer"
 import { UsersTableCard } from "@/components/users/users-table-card"
 

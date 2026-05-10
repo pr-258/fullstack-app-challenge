@@ -5,7 +5,10 @@ import { useUsersQuery } from "@/queries/users"
 import { useActingUserStore } from "@/stores/acting-user-store"
 import type { Role, User } from "@/types/api"
 
-import { ALL_MANAGERS, ALL_ROLES } from "./users-table-filters"
+import {
+  ALL_MANAGERS,
+  ALL_ROLES,
+} from "../components/users/users-table-filters"
 
 export function useUsersList() {
   const { actingUserId, actingUser } = useActingUserStore()

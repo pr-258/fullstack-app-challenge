@@ -10,7 +10,7 @@ import {
   ALL_COLLABORATORS,
   ALL_MANAGERS,
   ALL_STATUSES,
-} from "./vacation-request-table-filters"
+} from "../components/vacation-requests/vacation-request-table-filters"
 
 export function useVacationRequestsList() {
   const { actingUserId, actingUser } = useActingUserStore()

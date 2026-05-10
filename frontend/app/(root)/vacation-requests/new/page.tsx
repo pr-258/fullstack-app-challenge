@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 
 import { PageHeader } from "@/components/layout/page-header"
 import { VacationRequestForm } from "@/components/vacation-requests/vacation-request-form"
-import { useVacationRequestFormSubmit } from "@/components/vacation-requests/use-vacation-request-form-submit"
+import { useVacationRequestFormSubmit } from "@/hooks/use-vacation-request-form-submit"
 import { useUsersQuery } from "@/queries/users"
 import { useActingUserStore } from "@/stores/acting-user-store"
 
@@ -15,7 +15,9 @@ export default function NewVacationRequestPage() {
   const isAdmin = actingUser?.role === "ADMIN"
 
   const { data: usersData } = useUsersQuery(
-    isAdmin && actingUserId ? { actingUserId, size: 100, sort: "name,asc" } : null
+    isAdmin && actingUserId
+      ? { actingUserId, size: 100, sort: "name,asc" }
+      : null
   )
   const collaborators = usersData?.items.filter((u) => u.role !== "ADMIN")
 

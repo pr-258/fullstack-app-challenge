@@ -4,7 +4,7 @@ import { useParams, useRouter } from "next/navigation"
 
 import { PageHeader } from "@/components/layout/page-header"
 import { UserForm } from "@/components/users/user-form"
-import { useUserFormSubmit } from "@/components/users/use-user-form-submit"
+import { useUserFormSubmit } from "@/hooks/use-user-form-submit"
 import { useUserQuery, useUsersQuery } from "@/queries/users"
 import { useActingUserStore } from "@/stores/acting-user-store"
 
@@ -29,7 +29,9 @@ export default function EditUserPage() {
     return <p className="text-sm text-muted-foreground">A carregar...</p>
 
   if (!user)
-    return <p className="text-sm text-destructive">Utilizador não encontrado.</p>
+    return (
+      <p className="text-sm text-destructive">Utilizador não encontrado.</p>
+    )
 
   return (
     <>

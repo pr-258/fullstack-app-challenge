@@ -11,7 +11,7 @@ import type { VacationRequest } from "@/types/api"
 import { ActionsBar } from "./actions-bar"
 import { Details } from "./details"
 import { Footer } from "./footer"
-import { useVacationRequestDetailActions } from "./use-vacation-request-detail-actions"
+import { useVacationRequestDetailActions } from "@/hooks/use-vacation-request-detail-actions"
 
 interface VacationRequestDetailDrawerProps {
   request: VacationRequest | null

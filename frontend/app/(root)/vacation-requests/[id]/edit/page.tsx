@@ -4,10 +4,8 @@ import { useParams, useRouter } from "next/navigation"
 
 import { PageHeader } from "@/components/layout/page-header"
 import { VacationRequestForm } from "@/components/vacation-requests/vacation-request-form"
-import { useVacationRequestFormSubmit } from "@/components/vacation-requests/use-vacation-request-form-submit"
-import {
-  useVacationRequestQuery,
-} from "@/queries/vacation-requests"
+import { useVacationRequestFormSubmit } from "@/hooks/use-vacation-request-form-submit"
+import { useVacationRequestQuery } from "@/queries/vacation-requests"
 import { useActingUserStore } from "@/stores/acting-user-store"
 
 export default function EditVacationRequestPage() {

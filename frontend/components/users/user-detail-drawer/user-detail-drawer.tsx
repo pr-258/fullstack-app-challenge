@@ -11,7 +11,7 @@ import type { User } from "@/types/api"
 import { ActionsBar } from "./actions-bar"
 import { Details } from "./details"
 import { Footer } from "./footer"
-import { useUserDetailActions } from "./use-user-detail-actions"
+import { useUserDetailActions } from "@/hooks/use-user-detail-actions"
 
 interface UserDetailDrawerProps {
   user: User | null

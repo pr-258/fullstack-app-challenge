@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { SelectField } from "@/components/form/select-field"
 import { roleLabels } from "@/types/api"
 
-import { useLoginSelection } from "./use-login-selection"
+import { useLoginSelection } from "../../hooks/use-login-selection"
 
 export function LoginForm() {
   const {

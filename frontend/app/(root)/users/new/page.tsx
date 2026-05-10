@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 
 import { PageHeader } from "@/components/layout/page-header"
 import { UserForm } from "@/components/users/user-form"
-import { useUserFormSubmit } from "@/components/users/use-user-form-submit"
+import { useUserFormSubmit } from "@/hooks/use-user-form-submit"
 import { useUsersQuery } from "@/queries/users"
 import { useActingUserStore } from "@/stores/acting-user-store"
 
