@@ -1,14 +1,12 @@
 "use client"
 
-import { useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 
 import { PageHeader } from "@/components/layout/page-header"
 import { VacationRequestForm } from "@/components/vacation-requests/vacation-request-form"
-import { ApiError } from "@/api/client/fetcher"
+import { useVacationRequestFormSubmit } from "@/components/vacation-requests/use-vacation-request-form-submit"
 import {
   useVacationRequestQuery,
-  useUpdateVacationRequestMutation,
 } from "@/queries/vacation-requests"
 import { useActingUserStore } from "@/stores/acting-user-store"
 
@@ -16,37 +14,13 @@ export default function EditVacationRequestPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const { actingUserId } = useActingUserStore()
-  const [rootError, setRootError] = useState<string>()
 
   const { data: request, isLoading } = useVacationRequestQuery(id, actingUserId)
-  const update = useUpdateVacationRequestMutation(id, actingUserId!)
-
-  function onSubmit(values: {
-    startDate: string
-    endDate: string
-    reason?: string
-  }) {
-    update.mutate(
-      {
-        startDate: values.startDate,
-        endDate: values.endDate,
-        reason: values.reason || null,
-      },
-      {
-        onSuccess: () => router.replace("/vacation-requests"),
-        onError: (err) => {
-          const message =
-            err instanceof ApiError && err.code === "VACATION_OVERLAP"
-              ? "Já existe um pedido de férias aprovado neste período."
-              : err instanceof Error
-                ? err.message
-                : "Erro desconhecido"
-
-          setRootError(message)
-        },
-      }
-    )
-  }
+  const { rootError, isPending, onSubmit } = useVacationRequestFormSubmit({
+    mode: "edit",
+    requestId: id,
+    actingUserId: actingUserId ?? undefined,
+  })
 
   if (isLoading)
     return <p className="text-sm text-muted-foreground">A carregar...</p>
@@ -67,7 +41,7 @@ export default function EditVacationRequestPage() {
           reason: request.reason ?? "",
         }}
         onSubmit={onSubmit}
-        isPending={update.isPending}
+        isPending={isPending}
         onCancel={() => router.replace("/vacation-requests")}
         submitLabel="Guardar"
         rootError={rootError}

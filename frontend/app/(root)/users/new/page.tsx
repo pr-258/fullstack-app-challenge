@@ -1,54 +1,26 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 
 import { PageHeader } from "@/components/layout/page-header"
 import { UserForm } from "@/components/users/user-form"
-import { ApiError } from "@/api/client/fetcher"
-import { useCreateUserMutation, useUsersQuery } from "@/queries/users"
+import { useUserFormSubmit } from "@/components/users/use-user-form-submit"
+import { useUsersQuery } from "@/queries/users"
 import { useActingUserStore } from "@/stores/acting-user-store"
 
 export default function NewUserPage() {
   const router = useRouter()
   const { actingUserId } = useActingUserStore()
-  const [rootError, setRootError] = useState<string>()
 
   const { data: managersData } = useUsersQuery(
     actingUserId ? { actingUserId, role: "MANAGER" } : null
   )
   const managers = managersData?.items ?? []
 
-  const create = useCreateUserMutation(actingUserId!)
-
-  function onSubmit(values: {
-    name: string
-    email: string
-    role: "ADMIN" | "MANAGER" | "COLLABORATOR"
-    managerId?: string
-  }) {
-    create.mutate(
-      {
-        name: values.name,
-        email: values.email,
-        role: values.role,
-        managerId: values.role === "COLLABORATOR" ? (values.managerId ?? null) : null,
-      },
-      {
-        onSuccess: () => router.replace("/users"),
-        onError: (err) => {
-          const message =
-            err instanceof ApiError && err.code === "EMAIL_CONFLICT"
-              ? "Já existe um utilizador com este email."
-              : err instanceof Error
-                ? err.message
-                : "Erro desconhecido"
-
-          setRootError(message)
-        },
-      }
-    )
-  }
+  const { rootError, isPending, onSubmit } = useUserFormSubmit({
+    mode: "create",
+    actingUserId: actingUserId ?? undefined,
+  })
 
   return (
     <>
@@ -58,7 +30,7 @@ export default function NewUserPage() {
       />
       <UserForm
         onSubmit={onSubmit}
-        isPending={create.isPending}
+        isPending={isPending}
         onCancel={() => router.replace("/users")}
         managers={managers}
         rootError={rootError}

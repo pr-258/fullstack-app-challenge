@@ -12,13 +12,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { RadioCardField } from "@/components/form/radio-card-field"
 import { userSchema } from "@/types/schemas/user"
-import { roleLabels } from "@/types/api"
 import type { User } from "@/types/api"
 
 type FormValues = z.infer<typeof userSchema>
 
-const roles = ["ADMIN", "MANAGER", "COLLABORATOR"] as const
+const roleOptions = [
+  {
+    value: "ADMIN",
+    label: "Admin",
+    description: "Acesso total a utilizadores e todos os pedidos de férias",
+  },
+  {
+    value: "MANAGER",
+    label: "Manager",
+    description: "Aprova/rejeita pedidos da sua equipa",
+  },
+  {
+    value: "COLLABORATOR",
+    label: "Colaborador",
+    description: "Pode criar, ver, editar e cancelar os seus pedidos",
+  },
+]
 
 interface UserFormProps {
   defaultValues?: Partial<FormValues>
@@ -52,7 +68,7 @@ export function UserForm({
   const selectedRole = useWatch({ control, name: "role" })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-md space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-4">
       <label className="grid gap-2 text-sm">
         <span className="font-medium">Nome</span>
         <input
@@ -79,30 +95,19 @@ export function UserForm({
         )}
       </label>
 
-      <label className="grid gap-2 text-sm">
-        <span className="font-medium">Role</span>
-        <Controller
-          name="role"
-          control={control}
-          render={({ field }) => (
-            <Select value={field.value ?? ""} onValueChange={field.onChange}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Seleciona um role" />
-              </SelectTrigger>
-              <SelectContent>
-                {roles.map((role) => (
-                  <SelectItem key={role} value={role}>
-                    {roleLabels[role]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-        {errors.role && (
-          <p className="text-xs text-destructive">{errors.role.message}</p>
+      <Controller
+        name="role"
+        control={control}
+        render={({ field }) => (
+          <RadioCardField
+            label="Role"
+            value={field.value}
+            options={roleOptions}
+            onChange={field.onChange}
+            error={errors.role?.message}
+          />
         )}
-      </label>
+      />
 
       {selectedRole === "COLLABORATOR" && (
         <label className="grid gap-2 text-sm">
@@ -136,10 +141,10 @@ export function UserForm({
       )}
 
       <div className="flex gap-2">
-        <Button type="submit" disabled={isSubmitting || isPending}>
+        <Button type="submit" size="lg" disabled={isSubmitting || isPending}>
           {submitLabel}
         </Button>
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button type="button" size="lg" variant="outline" onClick={onCancel}>
           Cancelar
         </Button>
       </div>

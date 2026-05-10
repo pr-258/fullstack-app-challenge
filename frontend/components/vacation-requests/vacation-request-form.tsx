@@ -124,15 +124,13 @@ export function VacationRequestForm({
         />
       </label>
 
-      {rootError && (
-        <p className="text-sm text-destructive">{rootError}</p>
-      )}
+      {rootError && <p className="text-sm text-destructive">{rootError}</p>}
 
       <div className="flex gap-2">
-        <Button type="submit" disabled={isSubmitting || isPending}>
+        <Button type="submit" size="lg" disabled={isSubmitting || isPending}>
           {submitLabel}
         </Button>
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button type="button" size="lg" variant="outline" onClick={onCancel}>
           Cancelar
         </Button>
       </div>

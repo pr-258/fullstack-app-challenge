@@ -1,19 +1,17 @@
 "use client"
 
-import { useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 
 import { PageHeader } from "@/components/layout/page-header"
 import { UserForm } from "@/components/users/user-form"
-import { ApiError } from "@/api/client/fetcher"
-import { useUserQuery, useUpdateUserMutation, useUsersQuery } from "@/queries/users"
+import { useUserFormSubmit } from "@/components/users/use-user-form-submit"
+import { useUserQuery, useUsersQuery } from "@/queries/users"
 import { useActingUserStore } from "@/stores/acting-user-store"
 
 export default function EditUserPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const { actingUserId } = useActingUserStore()
-  const [rootError, setRootError] = useState<string>()
 
   const { data: user, isLoading } = useUserQuery(id, actingUserId)
   const { data: managersData } = useUsersQuery(
@@ -21,36 +19,11 @@ export default function EditUserPage() {
   )
   const managers = managersData?.items ?? []
 
-  const update = useUpdateUserMutation(id, actingUserId!)
-
-  function onSubmit(values: {
-    name: string
-    email: string
-    role: "ADMIN" | "MANAGER" | "COLLABORATOR"
-    managerId?: string
-  }) {
-    update.mutate(
-      {
-        name: values.name,
-        email: values.email,
-        role: values.role,
-        managerId: values.role === "COLLABORATOR" ? (values.managerId ?? null) : null,
-      },
-      {
-        onSuccess: () => router.replace("/users"),
-        onError: (err) => {
-          const message =
-            err instanceof ApiError && err.code === "EMAIL_CONFLICT"
-              ? "Já existe um utilizador com este email."
-              : err instanceof Error
-                ? err.message
-                : "Erro desconhecido"
-
-          setRootError(message)
-        },
-      }
-    )
-  }
+  const { rootError, isPending, onSubmit } = useUserFormSubmit({
+    mode: "edit",
+    userId: id,
+    actingUserId: actingUserId ?? undefined,
+  })
 
   if (isLoading)
     return <p className="text-sm text-muted-foreground">A carregar...</p>
@@ -72,7 +45,7 @@ export default function EditUserPage() {
           managerId: user.managerId ?? undefined,
         }}
         onSubmit={onSubmit}
-        isPending={update.isPending}
+        isPending={isPending}
         onCancel={() => router.replace("/users")}
         submitLabel="Guardar"
         managers={managers}
