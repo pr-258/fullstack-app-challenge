@@ -68,10 +68,13 @@ export default function VacationRequestsPage() {
   )
 
   const canActOnRequests =
-    actingUser?.role === "ADMIN" || actingUser?.role === "MANAGER"
+    (actingUser?.role === "ADMIN" || actingUser?.role === "MANAGER") &&
+    selected?.collaboratorId !== actingUserId
 
   const canCreate =
-    actingUser?.role === "ADMIN" || actingUser?.role === "COLLABORATOR"
+    actingUser?.role === "ADMIN" ||
+    actingUser?.role === "MANAGER" ||
+    actingUser?.role === "COLLABORATOR"
 
   const canModifySelected =
     selected !== null &&

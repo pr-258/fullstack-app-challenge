@@ -18,9 +18,9 @@ export default function NewVacationRequestPage() {
   const isAdmin = actingUser?.role === "ADMIN"
 
   const { data: usersData } = useUsersQuery(
-    isAdmin && actingUserId ? { actingUserId, role: "COLLABORATOR" } : null
+    isAdmin && actingUserId ? { actingUserId, size: 100, sort: "name,asc" } : null
   )
-  const collaborators = usersData?.items
+  const collaborators = usersData?.items.filter((u) => u.role !== "ADMIN")
 
   const create = useCreateVacationRequestMutation(actingUserId!)
 

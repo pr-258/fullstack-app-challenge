@@ -51,7 +51,11 @@ public class VacationRequestService {
         if (actingUserContext.isCollaborator()) {
             spec = spec.and(VacationRequestSpecification.forCollaborator(actingUserContext.getActingUserId()));
         } else if (actingUserContext.isManager()) {
-            spec = spec.and(VacationRequestSpecification.forManager(actingUserContext.getActingUserId()));
+            Specification<VacationRequest> ownRequests =
+                    VacationRequestSpecification.forCollaborator(actingUserContext.getActingUserId());
+            Specification<VacationRequest> teamRequests =
+                    VacationRequestSpecification.forManager(actingUserContext.getActingUserId());
+            spec = spec.and(ownRequests.or(teamRequests));
         }
 
         return PageResponse.from(vacationRequestRepository.findAll(spec, pageable).map(this::toResponse));
