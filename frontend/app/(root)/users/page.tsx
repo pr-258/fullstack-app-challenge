@@ -8,6 +8,16 @@ import { useActingUserStore } from "@/stores/acting-user-store"
 import { roleLabels } from "@/types/api"
 import type { User } from "@/types/api"
 import { PageHeader } from "@/components/layout/page-header"
+import {
+  Table,
+  TableBody,
+  TableCard,
+  TableCell,
+  TableEmptyState,
+  TableHeadCell,
+  TableHeader,
+  TableRow,
+} from "@/components/table/table-card"
 import { Button } from "@/components/ui/button"
 import { UserDetailDrawer } from "@/components/users/user-detail-drawer"
 
@@ -47,35 +57,32 @@ export default function UsersPage() {
         }
       />
 
-      {items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Sem colaboradores.</p>
-      ) : (
-        <div className="overflow-hidden rounded-md border">
-          <table className="w-full text-xs">
-            <thead className="bg-muted text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2 text-left font-medium">Nome</th>
-                <th className="px-3 py-2 text-left font-medium">Email</th>
-                <th className="px-3 py-2 text-left font-medium">Role</th>
-                <th className="px-3 py-2 text-left font-medium">Manager</th>
-                <th className="px-3 py-2 text-left font-medium">Ativo</th>
-                <th className="px-3 py-2 text-left font-medium">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((user) => (
-                <tr
-                  key={user.id}
-                  className="border-t transition-colors hover:bg-muted/50"
-                >
-                  <td className="px-3 py-2 font-medium">{user.name}</td>
-                  <td className="px-3 py-2 text-muted-foreground">{user.email}</td>
-                  <td className="px-3 py-2">{roleLabels[user.role]}</td>
-                  <td className="px-3 py-2 text-muted-foreground">
+      <TableCard>
+        <Table>
+          <TableHeader>
+            <tr>
+              <TableHeadCell>Nome</TableHeadCell>
+              <TableHeadCell>Email</TableHeadCell>
+              <TableHeadCell>Role</TableHeadCell>
+              <TableHeadCell>Manager</TableHeadCell>
+              <TableHeadCell>Ativo</TableHeadCell>
+              <TableHeadCell>Ação</TableHeadCell>
+            </tr>
+          </TableHeader>
+          <TableBody>
+            {items.length > 0 ? (
+              items.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="font-medium">{user.name}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {user.email}
+                  </TableCell>
+                  <TableCell>{roleLabels[user.role]}</TableCell>
+                  <TableCell className="text-muted-foreground">
                     {user.managerName ?? "-"}
-                  </td>
-                  <td className="px-3 py-2">{user.active ? "Sim" : "Não"}</td>
-                  <td className="px-3 py-2">
+                  </TableCell>
+                  <TableCell>{user.active ? "Sim" : "Não"}</TableCell>
+                  <TableCell>
                     <Button
                       size="sm"
                       variant="outline"
@@ -83,13 +90,15 @@ export default function UsersPage() {
                     >
                       Ver
                     </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableEmptyState colSpan={6}>Sem colaboradores.</TableEmptyState>
+            )}
+          </TableBody>
+        </Table>
+      </TableCard>
 
       <UserDetailDrawer
         user={selected}

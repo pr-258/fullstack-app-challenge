@@ -1,8 +1,10 @@
 "use client"
 
-import { RecentVacationRequests } from "@/components/dashboard/recent-vacation-requests"
+import Link from "next/link"
+
 import { StatCard } from "@/components/dashboard/stat-card"
 import { PageHeader } from "@/components/layout/page-header"
+import { VacationRequestsTable } from "@/components/vacation-requests/vacation-requests-table"
 import { useVacationRequestsQuery } from "@/queries/vacation-requests"
 import { useUsersQuery } from "@/queries/users"
 import { useActingUserStore } from "@/stores/acting-user-store"
@@ -96,13 +98,23 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-6">
-        <RecentVacationRequests
+        <VacationRequestsTable
           requests={recentRequests}
           title={
             isCollaborator
               ? "Meus pedidos de férias recentes"
               : "Pedidos de férias recentes"
           }
+          action={
+            <Link
+              href="/vacation-requests"
+              className="text-sm font-semibold text-primary underline-offset-4 hover:underline"
+            >
+              Ver todos
+            </Link>
+          }
+          emptyMessage="Ainda não existem pedidos para apresentar."
+          showUpdatedAt
         />
       </div>
     </>

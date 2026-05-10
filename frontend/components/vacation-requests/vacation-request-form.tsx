@@ -21,7 +21,6 @@ import {
 import type { User } from "@/types/api"
 
 type BaseValues = z.infer<typeof collaboratorVacationSchema>
-type AdminValues = z.infer<typeof adminVacationSchema>
 type FormValues = BaseValues & { collaboratorId?: string }
 
 interface VacationRequestFormProps {

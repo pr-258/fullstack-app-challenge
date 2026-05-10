@@ -1,6 +1,6 @@
 "use client"
 
-import { useForm, Controller } from "react-hook-form"
+import { useForm, Controller, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 
@@ -43,14 +43,13 @@ export function UserForm({
     register,
     handleSubmit,
     control,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(userSchema),
     defaultValues,
   })
 
-  const selectedRole = watch("role")
+  const selectedRole = useWatch({ control, name: "role" })
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-md space-y-4">
