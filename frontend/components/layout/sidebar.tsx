@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import {
+  Calendar02Icon,
   Calendar03Icon,
   DashboardSquare01Icon,
   Logout01Icon,
@@ -42,6 +43,11 @@ const navItems: navItem[] = [
     label: "Pedidos de Férias",
     href: "/vacation-requests",
     icon: Calendar03Icon,
+  },
+  {
+    label: "Calendário",
+    href: "/calendar",
+    icon: Calendar02Icon,
   },
 ]
 

@@ -19,6 +19,7 @@ const pageLabels: Record<string, string> = {
   "/users/new": "Novo Colaborador",
   "/vacation-requests": "Pedidos de Férias",
   "/vacation-requests/new": "Novo Pedido",
+  "/calendar": "Calendário",
 }
 
 const leafLabels: Record<string, string> = {
