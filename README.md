@@ -8,7 +8,7 @@ Aplicação full-stack para gerir colaboradores e pedidos de férias da TaskFlow
 - Frontend: Next.js, React, TanStack Query, Zustand, Tailwind CSS.
 - Infra: Docker Compose.
 
-## Funcionalidades
+## Funcionalidades core
 
 - Seleção de utilizador mockado para simular autenticação.
 - Gestão de colaboradores, disponível para `ADMIN`.
@@ -17,8 +17,14 @@ Aplicação full-stack para gerir colaboradores e pedidos de férias da TaskFlow
 - Aprovação/rejeição por `ADMIN` ou manager responsável.
 - Cancelamento e edição de pedidos pendentes.
 - Bloqueio de férias sobrepostas com datas inclusivas.
-- Paginação e filtros suportados pela API.
 - Documentação da API via Swagger.
+
+## Funcionalidades bonus implementadas
+
+- Simulação de autenticação via seleção de utilizador no frontend (`/login`), com header `X-Acting-User-Id` enviado em cada pedido e validação de role no backend.
+- Paginação e filtros suportados pela API e frontend.
+- Endpoint dedicado de estatísticas para o dashboard, com scope por role.
+- Visualização em calendário dos períodos de férias (aprovados e pendentes).
 
 ## Regras e Assunções
 
@@ -26,7 +32,7 @@ Aplicação full-stack para gerir colaboradores e pedidos de férias da TaskFlow
 - `ADMIN` pode gerir todos os utilizadores e todos os pedidos.
 - `MANAGER` pode ver e aprovar/rejeitar apenas pedidos dos seus colaboradores.
 - `COLLABORATOR` pode ver, criar, editar e cancelar apenas os seus próprios pedidos.
-- Managers e admins podem criar pedidos próprios, mas não podem aprovar/rejeitar os seus próprios pedidos.
+- `MANAGER` pode criar o seu próprio pedido de férias; este aparece na sua lista juntamente com os pedidos da sua equipa, mas só pode ser aprovado/rejeitado por um `ADMIN` (managers não têm manager acima deles).
 - Datas são inclusivas. Exemplo: `2026-08-01` a `2026-08-05` conta como 5 dias.
 - Pedidos `PENDING` e `APPROVED` bloqueiam sobreposição de férias.
 - Pedidos `REJECTED` e `CANCELLED` não bloqueiam períodos futuros.
@@ -62,14 +68,17 @@ docker compose down -v
 
 A aplicação inicia com utilizadores seeded. No frontend, basta escolher um utilizador em `http://localhost:3000/login`.
 
-| Nome        | Role           | Manager     |
-| ----------- | -------------- | ----------- |
-| Ana Silva   | `ADMIN`        | -           |
-| Bruno Costa | `MANAGER`      | -           |
-| Carlos Dias | `MANAGER`      | -           |
-| Diego Ramos | `COLLABORATOR` | Bruno Costa |
-| Eva Santos  | `COLLABORATOR` | Bruno Costa |
-| Fiona Lima  | `COLLABORATOR` | Carlos Dias |
+| Nome           | Role           | Manager      |
+| -------------- | -------------- | ------------ |
+| Ana Silva      | `ADMIN`        | -            |
+| Bruno Costa    | `MANAGER`      | -            |
+| Carlos Dias    | `MANAGER`      | -            |
+| Diana Fernandes| `MANAGER`      | -            |
+| Diego Ramos    | `COLLABORATOR` | Bruno Costa  |
+| Eva Santos     | `COLLABORATOR` | Bruno Costa  |
+| Fiona Lima     | `COLLABORATOR` | Carlos Dias  |
+
+A base de dados inclui 15 utilizadores no total (1 admin, 3 managers, 11 colaboradores) e 25 pedidos de férias para facilitar o teste de paginação e filtros.
 
 ## Testes
 
