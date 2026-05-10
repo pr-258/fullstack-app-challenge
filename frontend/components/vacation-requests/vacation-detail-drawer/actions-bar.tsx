@@ -11,6 +11,7 @@ type ActionsBarProps = {
   rejectionReason: string
   approvePending: boolean
   rejectPending: boolean
+  actionError?: string | null
   onApprove: () => void
   onStartReject: () => void
   onCancelReject: () => void
@@ -25,6 +26,7 @@ export function ActionsBar({
   rejectionReason,
   approvePending,
   rejectPending,
+  actionError,
   onApprove,
   onStartReject,
   onCancelReject,
@@ -58,6 +60,12 @@ export function ActionsBar({
           </div>
         )}
       </DrawerActionBar>
+
+      {actionError && (
+        <p className="border-b bg-muted/30 px-4 py-2 text-sm text-destructive">
+          {actionError}
+        </p>
+      )}
 
       {showApproveReject && rejecting && (
         <div className="space-y-3 border-b bg-muted/30 px-4 py-3">

@@ -9,6 +9,7 @@ type FooterProps = {
   canCancel?: boolean
   cancelling: boolean
   cancelPending: boolean
+  cancelError?: string | null
   onStartCancel: () => void
   onCancelCancel: () => void
   onConfirmCancel: () => void
@@ -20,6 +21,7 @@ export function Footer({
   canCancel,
   cancelling,
   cancelPending,
+  cancelError,
   onStartCancel,
   onCancelCancel,
   onConfirmCancel,
@@ -35,6 +37,9 @@ export function Footer({
           <p className="text-sm">
             Tens a certeza que queres cancelar este pedido?
           </p>
+          {cancelError && (
+            <p className="text-sm text-destructive">{cancelError}</p>
+          )}
           <div className="flex gap-2">
             <Button
               variant="destructive"

@@ -7,6 +7,7 @@ type FooterProps = {
   userId?: string
   isAdmin?: boolean
   deleting: boolean
+  deleteError?: string | null
   deletePending: boolean
   onStartDelete: () => void
   onCancelDelete: () => void
@@ -17,6 +18,7 @@ export function Footer({
   userId,
   isAdmin,
   deleting,
+  deleteError,
   deletePending,
   onStartDelete,
   onCancelDelete,
@@ -31,6 +33,9 @@ export function Footer({
           <p className="text-sm">
             Tens a certeza que queres apagar este colaborador?
           </p>
+          {deleteError && (
+            <p className="text-sm text-destructive">{deleteError}</p>
+          )}
           <div className="flex gap-2">
             <Button
               variant="destructive"

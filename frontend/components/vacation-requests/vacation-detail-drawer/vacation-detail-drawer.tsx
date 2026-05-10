@@ -36,6 +36,7 @@ export function VacationRequestDetailDrawer({
     rejecting,
     rejectionReason,
     cancelling,
+    actionError,
     approvePending,
     rejectPending,
     cancelPending,
@@ -69,6 +70,7 @@ export function VacationRequestDetailDrawer({
           rejectionReason={rejectionReason}
           approvePending={approvePending}
           rejectPending={rejectPending}
+          actionError={actionError}
           onApprove={handleApprove}
           onStartReject={() => setRejecting(true)}
           onCancelReject={() => {
@@ -88,6 +90,7 @@ export function VacationRequestDetailDrawer({
             canCancel={canCancel}
             cancelling={cancelling}
             cancelPending={cancelPending}
+            cancelError={cancelling ? actionError : null}
             onStartCancel={() => setCancelling(true)}
             onCancelCancel={() => setCancelling(false)}
             onConfirmCancel={handleCancel}

@@ -21,6 +21,7 @@ export function useVacationRequestDetailActions({
   const [rejecting, setRejecting] = useState(false)
   const [rejectionReason, setRejectionReason] = useState("")
   const [cancelling, setCancelling] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
 
   const approve = useApproveVacationRequestMutation(actingUserId ?? "")
   const reject = useRejectVacationRequestMutation(actingUserId ?? "")
@@ -30,6 +31,7 @@ export function useVacationRequestDetailActions({
     setRejecting(false)
     setRejectionReason("")
     setCancelling(false)
+    setActionError(null)
   }
 
   function handleOpenChange(next: boolean) {
@@ -39,7 +41,10 @@ export function useVacationRequestDetailActions({
 
   function handleApprove() {
     if (!request) return
-    approve.mutate(request.id, { onSuccess: () => onOpenChange(false) })
+    approve.mutate(request.id, {
+      onSuccess: () => onOpenChange(false),
+      onError: () => setActionError("Ocorreu um erro. Tenta novamente."),
+    })
   }
 
   function handleRejectConfirm() {
@@ -51,19 +56,24 @@ export function useVacationRequestDetailActions({
           onOpenChange(false)
           resetTransientState()
         },
+        onError: () => setActionError("Ocorreu um erro. Tenta novamente."),
       }
     )
   }
 
   function handleCancel() {
     if (!request) return
-    cancel.mutate(request.id, { onSuccess: () => onOpenChange(false) })
+    cancel.mutate(request.id, {
+      onSuccess: () => onOpenChange(false),
+      onError: () => setActionError("Erro ao cancelar pedido. Tenta novamente."),
+    })
   }
 
   return {
     rejecting,
     rejectionReason,
     cancelling,
+    actionError,
     approvePending: approve.isPending,
     rejectPending: reject.isPending,
     cancelPending: cancel.isPending,

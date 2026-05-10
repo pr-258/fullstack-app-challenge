@@ -15,10 +15,14 @@ export function useUserDetailActions({
   onOpenChange,
 }: UseUserDetailActionsParams) {
   const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
   const deleteUser = useDeleteUserMutation(actingUserId)
 
   function handleOpenChange(next: boolean) {
-    if (!next) setDeleting(false)
+    if (!next) {
+      setDeleting(false)
+      setDeleteError(null)
+    }
     onOpenChange(next)
   }
 
@@ -29,11 +33,13 @@ export function useUserDetailActions({
         onOpenChange(false)
         setDeleting(false)
       },
+      onError: () => setDeleteError("Erro ao apagar colaborador. Tenta novamente."),
     })
   }
 
   return {
     deleting,
+    deleteError,
     deletePending: deleteUser.isPending,
     setDeleting,
     handleOpenChange,

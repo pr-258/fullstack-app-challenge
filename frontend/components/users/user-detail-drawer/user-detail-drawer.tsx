@@ -30,6 +30,7 @@ export function UserDetailDrawer({
 }: UserDetailDrawerProps) {
   const {
     deleting,
+    deleteError,
     deletePending,
     setDeleting,
     handleOpenChange,
@@ -55,6 +56,7 @@ export function UserDetailDrawer({
           userId={user?.id}
           isAdmin={isAdmin}
           deleting={deleting}
+          deleteError={deleteError}
           deletePending={deletePending}
           onStartDelete={() => setDeleting(true)}
           onCancelDelete={() => setDeleting(false)}

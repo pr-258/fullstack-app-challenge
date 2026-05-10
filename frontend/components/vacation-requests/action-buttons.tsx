@@ -46,23 +46,28 @@ export function ActionButtons({ id, status, actingUserId }: ActionButtonsProps) 
 
   return (
     <>
-      <div className="flex gap-2">
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={approve.isPending}
-          onClick={() => approve.mutate(id)}
-        >
-          Aprovar
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={reject.isPending}
-          onClick={() => setRejectOpen(true)}
-        >
-          Rejeitar
-        </Button>
+      <div className="space-y-1">
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={approve.isPending}
+            onClick={() => approve.mutate(id)}
+          >
+            Aprovar
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={reject.isPending}
+            onClick={() => setRejectOpen(true)}
+          >
+            Rejeitar
+          </Button>
+        </div>
+        {approve.isError && (
+          <p className="text-xs text-destructive">Erro ao aprovar. Tenta novamente.</p>
+        )}
       </div>
 
       <Dialog open={rejectOpen} onOpenChange={setRejectOpen}>
