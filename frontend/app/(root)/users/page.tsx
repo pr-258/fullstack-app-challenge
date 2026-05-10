@@ -3,31 +3,57 @@
 import { useState } from "react"
 import Link from "next/link"
 
+import { usePagination } from "@/hooks/use-pagination"
 import { useUsersQuery } from "@/queries/users"
 import { useActingUserStore } from "@/stores/acting-user-store"
-import { roleLabels } from "@/types/api"
-import type { User } from "@/types/api"
+import type { Role, User } from "@/types/api"
 import { PageHeader } from "@/components/layout/page-header"
+import { PaginationControls } from "@/components/table/pagination-controls"
 import {
-  Table,
-  TableBody,
   TableCard,
-  TableCell,
-  TableEmptyState,
-  TableHeadCell,
-  TableHeader,
-  TableRow,
+  TableCardContent,
+  TableCardFooter,
+  TableCardToolbar,
 } from "@/components/table/table-card"
 import { Button } from "@/components/ui/button"
+import {
+  ALL_MANAGERS,
+  ALL_ROLES,
+  UsersTableFilters,
+} from "@/components/users/users-table-filters"
 import { UserDetailDrawer } from "@/components/users/user-detail-drawer"
+import { UsersTable } from "@/components/users/users-table"
 
 export default function UsersPage() {
   const { actingUserId, actingUser } = useActingUserStore()
-  const { data, isLoading, isError, error } = useUsersQuery(
-    actingUserId ? { actingUserId } : null
-  )
-
+  const [search, setSearch] = useState("")
+  const [role, setRole] = useState<Role | typeof ALL_ROLES>(ALL_ROLES)
+  const [managerId, setManagerId] = useState(ALL_MANAGERS)
+  const { page, size, setPage, setSize, resetPage } = usePagination()
   const [selected, setSelected] = useState<User | null>(null)
+
+  const { data, isLoading, isError, error } = useUsersQuery(
+    actingUserId
+      ? {
+          actingUserId,
+          search,
+          role: role === ALL_ROLES ? undefined : role,
+          managerId: managerId === ALL_MANAGERS ? undefined : managerId,
+          page,
+          size,
+          sort: "name,asc",
+        }
+      : null
+  )
+  const { data: filterOptionsData } = useUsersQuery(
+    actingUserId
+      ? {
+          actingUserId,
+          size: 100,
+          sort: "name,asc",
+        }
+      : null
+  )
 
   const isAdmin = actingUser?.role === "ADMIN"
 
@@ -42,6 +68,20 @@ export default function UsersPage() {
     )
 
   const items = data?.items ?? []
+  const managerOptions =
+    filterOptionsData?.items.filter((user) => user.role === "MANAGER") ?? []
+  const activeFilterCount = [
+    search !== "",
+    role !== ALL_ROLES,
+    managerId !== ALL_MANAGERS,
+  ].filter(Boolean).length
+
+  function resetFilters() {
+    setSearch("")
+    setRole(ALL_ROLES)
+    setManagerId(ALL_MANAGERS)
+    resetPage()
+  }
 
   return (
     <>
@@ -58,57 +98,60 @@ export default function UsersPage() {
       />
 
       <TableCard>
-        <Table>
-          <TableHeader>
-            <tr>
-              <TableHeadCell>Nome</TableHeadCell>
-              <TableHeadCell>Email</TableHeadCell>
-              <TableHeadCell>Role</TableHeadCell>
-              <TableHeadCell>Manager</TableHeadCell>
-              <TableHeadCell>Ativo</TableHeadCell>
-              <TableHeadCell>Ação</TableHeadCell>
-            </tr>
-          </TableHeader>
-          <TableBody>
-            {items.length > 0 ? (
-              items.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.name}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {user.email}
-                  </TableCell>
-                  <TableCell>{roleLabels[user.role]}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {user.managerName ?? "-"}
-                  </TableCell>
-                  <TableCell>{user.active ? "Sim" : "Não"}</TableCell>
-                  <TableCell>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setSelected(user)}
-                    >
-                      Ver
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableEmptyState colSpan={6}>Sem colaboradores.</TableEmptyState>
-            )}
-          </TableBody>
-        </Table>
+        <TableCardToolbar>
+          <UsersTableFilters
+            totalItems={data?.totalItems ?? 0}
+            activeFilterCount={activeFilterCount}
+            search={search}
+            role={role}
+            managerId={managerId}
+            managerOptions={managerOptions}
+            onSearchChange={(value) => {
+              setSearch(value)
+              resetPage()
+            }}
+            onRoleChange={(value) => {
+              setRole(value)
+              resetPage()
+            }}
+            onManagerChange={(value) => {
+              setManagerId(value)
+              resetPage()
+            }}
+            onClearFilters={resetFilters}
+          />
+        </TableCardToolbar>
+
+        <TableCardContent>
+          <UsersTable users={items} onView={setSelected} />
+        </TableCardContent>
+
+        <TableCardFooter>
+          <PaginationControls
+            page={data?.page ?? page}
+            size={data?.size ?? size}
+            totalItems={data?.totalItems ?? 0}
+            totalPages={data?.totalPages ?? 0}
+            onPageChange={setPage}
+            onPageSizeChange={(nextSize) => {
+              setSize(nextSize)
+              resetPage()
+            }}
+          />
+        </TableCardFooter>
       </TableCard>
 
-      <UserDetailDrawer
-        user={selected}
-        open={selected !== null}
-        onOpenChange={(open) => {
-          if (!open) setSelected(null)
-        }}
-        actingUserId={actingUserId!}
-        isAdmin={isAdmin}
-      />
+      {actingUserId && (
+        <UserDetailDrawer
+          user={selected}
+          open={selected !== null}
+          onOpenChange={(open) => {
+            if (!open) setSelected(null)
+          }}
+          actingUserId={actingUserId}
+          isAdmin={isAdmin}
+        />
+      )}
     </>
   )
 }

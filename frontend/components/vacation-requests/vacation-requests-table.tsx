@@ -6,6 +6,7 @@ import {
   Table,
   TableBody,
   TableCard,
+  TableCardContent,
   TableCell,
   TableEmptyState,
   TableHeadCell,
@@ -24,6 +25,11 @@ type VacationRequestsTableProps = {
   showUpdatedAt?: boolean
   onView?: (request: VacationRequest) => void
 }
+
+type VacationRequestsTableContentProps = Omit<
+  VacationRequestsTableProps,
+  "title" | "action"
+>
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("pt-PT", {
@@ -51,8 +57,6 @@ export function VacationRequestsTable({
   showUpdatedAt = false,
   onView,
 }: VacationRequestsTableProps) {
-  const columnCount = showUpdatedAt ? 7 : 6
-
   return (
     <TableCard
       title={title}
@@ -67,65 +71,85 @@ export function VacationRequestsTable({
       }
       action={action}
     >
-      <Table>
-        <TableHeader>
-          <tr>
-            <TableHeadCell>Colaborador</TableHeadCell>
-            <TableHeadCell>Início</TableHeadCell>
-            <TableHeadCell>Fim</TableHeadCell>
-            <TableHeadCell>Dias</TableHeadCell>
-            <TableHeadCell>Estado</TableHeadCell>
-            {showUpdatedAt ? (
-              <TableHeadCell className="hidden lg:table-cell">
-                Última atualização
-              </TableHeadCell>
-            ) : null}
-            <TableHeadCell>Ação</TableHeadCell>
-          </tr>
-        </TableHeader>
-        <TableBody>
-          {requests.length > 0 ? (
-            requests.map((request) => (
-              <TableRow key={request.id}>
-                <TableCell className="font-medium">
-                  {request.collaboratorName}
-                </TableCell>
-                <TableCell>{formatDate(request.startDate)}</TableCell>
-                <TableCell>{formatDate(request.endDate)}</TableCell>
-                <TableCell>{request.inclusiveDays}</TableCell>
-                <TableCell>
-                  <VacationStatusBadge status={request.status} />
-                </TableCell>
-                {showUpdatedAt ? (
-                  <TableCell className="hidden text-muted-foreground lg:table-cell">
-                    {formatDateTime(request.updatedAt)}
-                  </TableCell>
-                ) : null}
-                <TableCell>
-                  {onView ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => onView(request)}
-                    >
-                      Ver
-                    </Button>
-                  ) : (
-                    <Link
-                      href="/vacation-requests"
-                      className="font-semibold text-primary underline-offset-4 hover:underline"
-                    >
-                      Ver
-                    </Link>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableEmptyState colSpan={columnCount}>{emptyMessage}</TableEmptyState>
-          )}
-        </TableBody>
-      </Table>
+      <TableCardContent>
+        <VacationRequestsTableContent
+          requests={requests}
+          emptyMessage={emptyMessage}
+          showUpdatedAt={showUpdatedAt}
+          onView={onView}
+        />
+      </TableCardContent>
     </TableCard>
+  )
+}
+
+export function VacationRequestsTableContent({
+  requests,
+  emptyMessage = "Sem pedidos de férias.",
+  showUpdatedAt = false,
+  onView,
+}: VacationRequestsTableContentProps) {
+  const columnCount = showUpdatedAt ? 7 : 6
+
+  return (
+    <Table>
+      <TableHeader>
+        <tr>
+          <TableHeadCell>Colaborador</TableHeadCell>
+          <TableHeadCell>Início</TableHeadCell>
+          <TableHeadCell>Fim</TableHeadCell>
+          <TableHeadCell>Dias</TableHeadCell>
+          <TableHeadCell>Estado</TableHeadCell>
+          {showUpdatedAt ? (
+            <TableHeadCell className="hidden lg:table-cell">
+              Última atualização
+            </TableHeadCell>
+          ) : null}
+          <TableHeadCell>Ação</TableHeadCell>
+        </tr>
+      </TableHeader>
+      <TableBody>
+        {requests.length > 0 ? (
+          requests.map((request) => (
+            <TableRow key={request.id}>
+              <TableCell className="font-medium">
+                {request.collaboratorName}
+              </TableCell>
+              <TableCell>{formatDate(request.startDate)}</TableCell>
+              <TableCell>{formatDate(request.endDate)}</TableCell>
+              <TableCell>{request.inclusiveDays}</TableCell>
+              <TableCell>
+                <VacationStatusBadge status={request.status} />
+              </TableCell>
+              {showUpdatedAt ? (
+                <TableCell className="hidden text-muted-foreground lg:table-cell">
+                  {formatDateTime(request.updatedAt)}
+                </TableCell>
+              ) : null}
+              <TableCell>
+                {onView ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onView(request)}
+                  >
+                    Ver
+                  </Button>
+                ) : (
+                  <Link
+                    href="/vacation-requests"
+                    className="font-semibold text-primary underline-offset-4 hover:underline"
+                  >
+                    Ver
+                  </Link>
+                )}
+              </TableCell>
+            </TableRow>
+          ))
+        ) : (
+          <TableEmptyState colSpan={columnCount}>{emptyMessage}</TableEmptyState>
+        )}
+      </TableBody>
+    </Table>
   )
 }

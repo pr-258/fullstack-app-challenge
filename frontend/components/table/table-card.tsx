@@ -48,11 +48,25 @@ export function TableCard({
         </div>
       ) : null}
 
-      <div className="overflow-hidden rounded-lg border bg-card">
-        <div className="overflow-x-auto">{children}</div>
-      </div>
+      {children}
     </section>
   )
+}
+
+export function TableCardToolbar({ children, className }: TablePartProps) {
+  return <div className={cn("bg-muted px-2 py-3", className)}>{children}</div>
+}
+
+export function TableCardContent({ children, className }: TablePartProps) {
+  return (
+    <div className={cn("overflow-hidden rounded-lg border bg-card", className)}>
+      <div className="overflow-x-auto">{children}</div>
+    </div>
+  )
+}
+
+export function TableCardFooter({ children, className }: TablePartProps) {
+  return <div className={cn("px-4 py-3", className)}>{children}</div>
 }
 
 export function Table({
@@ -81,16 +95,15 @@ export function TableBody({ children, className }: TablePartProps) {
 
 export function TableRow({ children, className }: TablePartProps) {
   return (
-    <tr className={cn("border-t transition-colors hover:bg-muted/40", className)}>
+    <tr
+      className={cn("border-t transition-colors hover:bg-muted/40", className)}
+    >
       {children}
     </tr>
   )
 }
 
-export function TableHeadCell({
-  children,
-  className,
-}: ComponentProps<"th">) {
+export function TableHeadCell({ children, className }: ComponentProps<"th">) {
   return (
     <th className={cn("px-4 py-3 font-semibold", className)}>{children}</th>
   )
@@ -109,7 +122,10 @@ export function TableEmptyState({
 }) {
   return (
     <tr>
-      <td colSpan={colSpan} className="px-4 py-8 text-center text-muted-foreground">
+      <td
+        colSpan={colSpan}
+        className="px-4 py-8 text-center text-muted-foreground"
+      >
         {children}
       </td>
     </tr>
