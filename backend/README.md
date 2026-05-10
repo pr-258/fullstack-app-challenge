@@ -1,55 +1,17 @@
-# Vacation Management API
+# Backend API
 
-Backend API para o desafio técnico de gestão de férias da TaskFlow. A aplicação gere utilizadores, pedidos de férias, regras de acesso por role, validação de sobreposição de datas e documentação da API.
+API Spring Boot do sistema de gestao de ferias. Para correr a solucao completa com frontend, backend e PostgreSQL, consultar o `README.md` na raiz do projeto.
 
-## Main Stack
+## Stack
 
 - Java 21
 - Spring Boot
 - PostgreSQL
 - Flyway
-- OpenAPI / Swagger UI
-- Docker Compose
-- JUnit 5 com Testcontainers
+- Springdoc OpenAPI / Swagger UI
+- JUnit 5, Rest-Assured e Testcontainers
 
-## Features
-
-- CRUD de utilizadores para admins.
-- Criação, listagem, detalhe, edição, aprovação, rejeição e cancelamento de pedidos de férias.
-- Autenticação mock através do request header `X-Acting-User-Id`.
-- Controlo de acesso por role: `ADMIN`, `MANAGER` e `COLLABORATOR`.
-- Validação de intervalos de datas inclusivos.
-- Bloqueio de períodos de férias ativos sobrepostos entre colaboradores.
-- Paginação e filtros para utilizadores e pedidos de férias.
-- Respostas de erro em JSON com formato consistente.
-- Documentação Swagger/OpenAPI.
-
-## Regras de Negócio
-
-- Admins podem gerir todos os utilizadores e todos os pedidos de férias.
-- Managers podem ver e aprovar/rejeitar apenas pedidos dos seus colaboradores.
-- Collaborators podem ver, criar, editar e cancelar apenas os seus próprios pedidos.
-- Todos os utilizadores ativos podem criar pedidos de férias.
-- Managers e admins também podem criar pedidos de férias, mas não podem aprovar ou rejeitar os seus próprios pedidos.
-- As datas de férias são inclusivas. Por exemplo, `2026-08-01` a `2026-08-05` conta como 5 dias.
-- Pedidos com estado `PENDING` e `APPROVED` bloqueiam períodos de férias sobrepostos.
-- Pedidos com estado `REJECTED` e `CANCELLED` não bloqueiam períodos futuros.
-- Apenas pedidos `PENDING` podem ser editados, aprovados, rejeitados ou cancelados.
-
-## Utilizadores Mock
-
-A base de dados é inicializada com utilizadores para testar os fluxos de roles:
-
-| Nome        | Role           | User ID                                | Manager     |
-| ----------- | -------------- | -------------------------------------- | ----------- |
-| Ana Silva   | `ADMIN`        | `00000000-0000-0000-0000-000000000001` | -           |
-| Bruno Costa | `MANAGER`      | `00000000-0000-0000-0000-000000000002` | -           |
-| Carlos Dias | `MANAGER`      | `00000000-0000-0000-0000-000000000003` | -           |
-| Diego Ramos | `COLLABORATOR` | `00000000-0000-0000-0000-000000000004` | Bruno Costa |
-| Eva Santos  | `COLLABORATOR` | `00000000-0000-0000-0000-000000000005` | Bruno Costa |
-| Fiona Lima  | `COLLABORATOR` | `00000000-0000-0000-0000-000000000006` | Carlos Dias |
-
-## Executar com Docker
+## Correr apenas o backend
 
 Criar o ficheiro de ambiente:
 
@@ -57,15 +19,15 @@ Criar o ficheiro de ambiente:
 cp .env.example .env
 ```
 
-Iniciar PostgreSQL e backend:
+Subir PostgreSQL e API a partir desta pasta:
 
 ```bash
 docker compose up --build
 ```
 
-URLs úteis:
+URLs uteis:
 
-- API root: `http://localhost:8080`
+- API: `http://localhost:8080`
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
 - OpenAPI JSON: `http://localhost:8080/api-docs`
 - Utilizadores mock: `http://localhost:8080/api/auth/mock-users`
@@ -76,38 +38,44 @@ Parar os containers:
 docker compose down
 ```
 
-Limpar o volume local da base de dados:
+Remover tambem o volume local da base de dados:
 
 ```bash
 docker compose down -v
 ```
 
-## Executar Testes
+## Testes
 
-O Docker deve estar em execução porque os testes de integração usam Testcontainers com PostgreSQL.
+Os testes de integracao usam Testcontainers, por isso o Docker deve estar em execucao.
 
 ```bash
 ./mvnw test
 ```
 
-## Uso da API
+## Autenticacao mock
 
-A autenticação é simulada através do request header `X-Acting-User-Id`. Usa um dos IDs dos utilizadores mock da tabela acima para simular o utilizador autenticado.
+A autenticacao e simulada pelo header:
 
-Para detalhes dos endpoints, schemas de request/response e testes manuais, usar o Swagger UI:
+```http
+X-Acting-User-Id: <user-id>
+```
 
-- `http://localhost:8080/swagger-ui.html`
+O endpoint `/api/auth/mock-users` devolve os utilizadores seeded que podem ser usados para simular `ADMIN`, `MANAGER` e `COLLABORATOR`.
+
+## Regras de negocio
+
+As regras de roles, ownership, datas inclusivas, sobreposicao de ferias e transicoes de status estao documentadas no `README.md` da raiz do projeto.
 
 ## Filtros
 
-Os utilizadores podem ser filtrados por:
+Utilizadores:
 
 - `role`
 - `managerId`
 - `search`
-- parâmetros de paginação do Spring, como `page`, `size` e `sort`
+- `page`, `size`, `sort`
 
-Os pedidos de férias podem ser filtrados por:
+Pedidos de ferias:
 
 - `status`
 - `collaboratorId`
@@ -115,4 +83,6 @@ Os pedidos de férias podem ser filtrados por:
 - `startDate`
 - `endDate`
 - `search`
-- parâmetros de paginação do Spring, como `page`, `size` e `sort`
+- `page`, `size`, `sort`
+
+Consultar o Swagger UI para detalhes dos endpoints, schemas e respostas de erro.
